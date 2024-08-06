@@ -1,3 +1,6 @@
+# Version 0.2
+
+
 import time
 import random
 
@@ -79,7 +82,7 @@ farm_default = [
 # in_town(game_vars) function
 # goals:
 # 1. Visit the shop to buy seeds.                              [*]
-# 2. Visit the farm to plant seeds and harvest crops.          [ ]
+# 2. Visit the farm to plant seeds and harvest crops.          [*]
 # 3. End the day, resetting Energy and allowing crops to grow. [*]
 
 
@@ -113,7 +116,7 @@ def in_town(game_vars, farm):
 
 -------------------------
 1) Visit Shop
-2) Visit Farm (incomplete)
+2) Visit Farm
 3) End Day
 
 9) Save Game (incomplete)
@@ -123,7 +126,12 @@ def in_town(game_vars, farm):
 
         if choice == '1':
             game_vars = in_shop(game_vars)
+
         
+        elif choice == '2':
+            game_vars, farm = in_farm(game_vars, farm)
+
+
         elif choice == '3':
             game_vars, farm = end_day(game_vars, farm)
         
@@ -239,7 +247,47 @@ def in_shop(game_vars):
 # goals:
 # Draw farm and house on the grid
 #
-# def draw_farm(game_vars):
+def draw_farm(farm, farmer_row, farmer_col):
+    
+    # drawing the farm by row
+    for row in range(len(farm)):
+
+        print('+-----' * len(farm[row]), end='+\n')
+        # name/seed name display
+        for a in farm[row]:
+            try:
+                if 'House' != a :
+                    print(f'| {a[0]:<3} ', end='')
+                else: 
+                    print(f'| HSE ', end='')
+            
+            except TypeError:
+                print('|     ', end='')
+        print('|')
+        
+        # print player position
+        for b in range(len(farm[row])):
+
+            if b == farmer_col and row == farmer_row:
+                print('|  X  ', end = '')
+            else: 
+                print('|     ', end='')
+        print('|')
+
+        # print days for seed to grow
+        for a in farm[row]:
+            try:
+                if 'House' != a :
+                    print(f'|  {a[1]:<2} ', end='')
+                else: print('|     ', end='')
+            
+            except TypeError:
+                print('|     ', end='')
+        print('|')
+
+    print('+-----' * len(farm[row]), end='+\n')
+
+
 
 
 
@@ -252,7 +300,172 @@ def in_shop(game_vars):
 # Return to town (does not cost energy)
 #
 #
-# def in_farm(game_vars):
+def in_farm(game_vars, farm):
+
+
+    # starting coordinates of the player
+    pos_x, pos_y = 2, 2
+
+    while True:
+        energy = game_vars['energy']
+        batch_h = False # variable for checking if person can harvest 2x2
+        draw_farm(farm,pos_y,pos_x)
+
+        # prevent people from planting over and also allow harvest functionality
+        if farm[pos_y][pos_x] == None:
+            string_a = '\nP)lant seed'
+
+        elif (farm[pos_y][pos_x] == 'House') or farm[pos_y][pos_x][1] != 0: 
+            string_a = ''
+
+        # check if user can harvest 2x2 grid
+        elif farm[pos_y][pos_x] == farm[pos_y + 1][pos_x + 1] == farm[pos_y + 1][pos_x] == farm[pos_y][pos_x + 1] and (pos_x > len(farm) - 1 and pos_y > len(farm)-1):
+
+            batch_h = True
+            # ask user if wants to harvest
+            string_a = '\nH)arvest '+seeds[farm[pos_y][pos_x][0]]['name'] +' for $' + str(seeds[farm[pos_y][pos_x][0]]['price'] * 4)
+
+        else: 
+            
+            string_a = '\nH)arvest ' + seeds[farm[pos_y][pos_x][0]]['name'] + ' for $' + str(seeds[farm[pos_y][pos_x][0]]['price'])
+
+        choice = input(f'''Energy: {energy}
+[WASD] Move {string_a}
+R)eturn to Town
+Your choice? ''').lower()
+
+        # input validation
+        if (farm[pos_y][pos_x] == 'House' and choice in 'ph') or (farm[pos_y][pos_x] == None and choice == 'h') or (farm[pos_y][pos_x] != None and choice == 'p'):
+            print('Invalid input!')
+            game_vars['error_count'] += 1
+            continue
+        
+        # match input to what user selected
+        
+        if choice == 'w': 
+            if pos_y > 0 and energy > 0: 
+                pos_y -= 1
+                game_vars['energy'] -= 1 
+            
+            else:
+                print('Too tired')
+        elif choice == 'a':
+
+            if pos_x > 0 and energy > 0: 
+                pos_x -= 1
+                game_vars['energy'] -= 1
+                
+            else:
+                print('Too tired')
+            
+        elif choice == 's':
+            if pos_y < len(farm) - 1 and energy > 0: 
+                pos_y +=1
+                game_vars['energy'] -= 1
+
+            else:
+                print('Too tired')
+            
+        elif choice == 'd':
+            if pos_x < len(farm) - 1 and energy > 0: 
+                pos_x += 1
+                game_vars['energy'] -= 1
+                
+            else:
+                print('Too tired')
+
+        elif choice == 'h': # harvest
+
+            game_vars['energy'] -= 1
+            plant = farm[pos_y][pos_x]
+            # check for 2x2 squares of harvestable farm
+            if batch_h:
+                    
+                print(f'You harvest the {seeds[plant[0]]['name']} and sold it for ${seeds[plant[0]]['crop_price'] * 4}!')
+                game_vars['money'] += seeds[plant[0]]['crop_price'] * 4
+
+                farm[pos_y][pos_x] = None
+                farm[pos_y+1][pos_x] = None
+                farm[pos_y][pos_x+1] = None
+                farm[pos_y+1][pos_x+1] = None
+                print(f'You now have ${game_vars['money']}!')
+
+            elif farm[pos_y][pos_x][1] == 0:
+
+                print(f'You harvest the {seeds[plant[0]]['name']} and sold it for ${seeds[plant[0]]['crop_price']}!')
+                game_vars['money'] += seeds[plant[0]]['crop_price']
+                farm[pos_y][pos_x] = None
+                print(f'You now have ${game_vars['money']}!')
+
+            else: 
+                print('Your harvest failed! This is reality kid.')
+                farm[pos_y][pos_x] = None
+
+        elif choice == 'p': # plant
+
+            print(f'''What do you wish to plant?
+{'-'*53}
+    Seed{'Days to Grow':>20}{'Crop Price':>15}{'Avaliable':>12}
+{'-'*53}''')    
+            # check if bag is empty
+            if game_vars['bag'] == {}:
+                print('You have no seeds.')
+                print('\n 0) Leave', '\n' + '-' * 53)
+                continue
+                
+            else:
+                for a, b in enumerate(game_vars['bag'].keys()):
+                    print(f"{a+1:>2}) {seeds[b]['name']:<17}{seeds[b]['growth_time']:<16}{seeds[b]['crop_price']:<13}{game_vars['bag'][b]}")
+                
+            print('\n 0) Leave','\n'+'-'*53)
+
+            # input validation
+            try: 
+                choice_2 = int(input('Your choice? ')) - 1
+                if 0 <= choice_2 <= len(game_vars['bag']):
+                    pass
+                else: 
+                    print('Invalid Input!')
+                    game_vars['error_count'] += 1
+                    continue
+            
+            except ValueError:
+                print('Invalid input!')
+                game_vars['error_count']+=1
+                continue
+
+            if choice_2 + 1 == 0: 
+                continue # check if player wants to leave
+
+            seed_sel = list(game_vars['bag'].keys())[choice_2]
+            seed_quan = game_vars['bag'][seed_sel]
+
+            # update map
+            if farm[pos_y][pos_x] == None:
+
+                if seed_quan > 1:
+                    game_vars['bag'][seed_sel] -= 1
+                    farm[pos_y][pos_x] = [seed_sel,seeds[seed_sel]['growth_time']]
+                    
+                else:
+                    del game_vars['bag'][seed_sel]
+                    farm[pos_y][pos_x] = [seed_sel,seeds[seed_sel]['growth_time']]
+
+                game_vars['energy'] -= 1
+                
+                # prevent players from planting on occupied places
+            elif farm[pos_y][pos_x].lower == 'house': 
+                print('You can\' plant here!')
+            else: 
+                print('This spot has been taken')
+
+        elif choice == 'r':
+                break
+        
+        else:
+            print('Invalid Input.')     
+    
+    return game_vars, farm    
 
 
 
