@@ -1,6 +1,7 @@
-# Version 0.2
+# Version 0.3
 
 
+import os
 import time
 import random
 
@@ -478,6 +479,13 @@ Your choice? ''').lower()
 #   - Contents of seed bag
 #
 def show_stats(game_vars):
+    
+    try:
+        os.system('clear')
+    except Exception:
+        os.system('cls')
+
+
     print('+' + '-' * 50 + '+')
     
     # print days
@@ -554,8 +562,9 @@ def leader_board():
     
     try:
         print('----------------------------------------------------------')
-        #sorting contents before printing the leaderboard
-        with open('Leaderboard.txt','r') as reader:
+
+        # sorting contents before printing the leaderboard
+        with open('Leaderboard.txt', 'r') as reader:
             contents = reader.readlines()
             contents = [line.strip().split(';') for line in contents]
 
@@ -563,16 +572,16 @@ def leader_board():
         print('Rank Amount Time')
         if len(contents) > 5:
             for i in range(5):
-                print(i+1,'$'+str(contents[i][1]),contents[i][0])
+                print(i + 1, '$' + str(contents[i][1]), contents[i][0])
         else:
             for i in range(len(contents)):
-                print(i+1,'$'+str(contents[i][1]),contents[i][0])
+                print(i + 1, '$' + str(contents[i][1]), contents[i][0])
 
-        contents = [str(a[0])+';'+str(a[1]) for a in contents]
+        contents = [str(a[0]) + ';' + str(a[1]) for a in contents]
 
         with open('Leaderboard.txt', 'w') as writer:
             for m in contents:
-                writer.writelines(m+'\n')
+                writer.writelines(m + '\n')
 
 
         k = input('Press any key to leave\n')
@@ -580,8 +589,6 @@ def leader_board():
     except FileNotFoundError:
         print('No Entry Yet.')
         k = input('\nPress any key to leave\n')
-
-
 
 #----------------------------------------------------------------------
 #    Main Game Loop
@@ -604,7 +611,7 @@ How successful will you be?
     
         options_txt = '''1) Start a new game
 2) Load Your saved game (incomplete)
-3) Leaderboard (incomplete)
+3) Leaderboard
 
 0) Exit Game
 > '''
@@ -622,6 +629,7 @@ How successful will you be?
             
         elif choice == '3':
             leader_board()
+
             
         elif choice == '0':
             print('See you next time!')
