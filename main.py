@@ -34,7 +34,6 @@ seeds = {
     'LET': {'name': 'Lettuce', 
     'price': 2,
     'growth_time': 2,
-    'growth_time': 2,
     'crop_price': 3
     },
     
