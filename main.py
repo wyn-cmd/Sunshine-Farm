@@ -1,6 +1,7 @@
 # Version 0.3
 
 
+import copy
 import os
 import time
 import random
@@ -109,8 +110,8 @@ def in_town(game_vars, farm):
             else:
                 print('You lost!')
             
-            farm = farm_defualt
-            game_vars = game_vars_start
+            farm = copy.deepcopy(farm_default)
+            game_vars = copy.deepcopy(game_vars_start)
 
         choice = input('''You are in the town of Prixia
 
