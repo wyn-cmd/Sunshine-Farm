@@ -548,8 +548,8 @@ def bubble_sort(lista):
 
         for a in range(0, n-i-1):
 
-            if lista[a][1] < lista[a+1][1]:
-                lista[a][1], lista[a+1][1] = lista[a+1][1], lista[a][1]
+            if int(lista[a][1]) < int(lista[a+1][1]):
+                lista[a], lista[a+1] = lista[a+1], lista[a]
                 swapped = True
         if (swapped == False):
             break
