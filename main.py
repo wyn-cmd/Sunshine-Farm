@@ -201,7 +201,7 @@ def in_shop(game_vars):
         
         #ask player the amount of seed that they want to purchase
         try:
-            amount = int(input(f'You have ${game_vars['money']}\nHow many do you wish to buy? '))
+            amount = int(input(f"You have ${game_vars['money']}\nHow many do you wish to buy? "))
             
             if amount < 0 :
                 print('Invalid input!')
@@ -225,7 +225,7 @@ def in_shop(game_vars):
             b = game_vars['bag'].get(seed_list[choice])
             game_vars['bag'].update({seed_list[choice]:(0 if b == None else b) + amount})
 
-            print(f'You bought {amount} {seeds[seed_list[choice]]['name']} seeds.')
+            print(f"You bought {amount} {seeds[seed_list[choice]]['name']} seeds.")
 
     return game_vars
 
@@ -382,21 +382,21 @@ Your choice? ''').lower()
             # check for 2x2 squares of harvestable farm
             if batch_h:
                     
-                print(f'You harvest the {seeds[plant[0]]['name']} and sold it for ${seeds[plant[0]]['crop_price'] * 4}!')
+                print(f"You harvest the {seeds[plant[0]]['name']} and sold it for ${seeds[plant[0]]['crop_price'] * 4}!")
                 game_vars['money'] += seeds[plant[0]]['crop_price'] * 4
 
                 farm[pos_y][pos_x] = None
                 farm[pos_y+1][pos_x] = None
                 farm[pos_y][pos_x+1] = None
                 farm[pos_y+1][pos_x+1] = None
-                print(f'You now have ${game_vars['money']}!')
+                print(f"You now have ${game_vars['money']}!")
 
             elif farm[pos_y][pos_x][1] == 0:
 
-                print(f'You harvest the {seeds[plant[0]]['name']} and sold it for ${seeds[plant[0]]['crop_price']}!')
+                print(f"You harvest the {seeds[plant[0]]['name']} and sold it for ${seeds[plant[0]]['crop_price']}!")
                 game_vars['money'] += seeds[plant[0]]['crop_price']
                 farm[pos_y][pos_x] = None
-                print(f'You now have ${game_vars['money']}!')
+                print(f"You now have ${game_vars['money']}!")
 
             else: 
                 print('Your harvest failed! This is reality kid.')
@@ -423,7 +423,7 @@ Your choice? ''').lower()
             # input validation
             try: 
                 choice_2 = int(input('Your choice? ')) - 1
-                if 0 <= choice_2 <= len(game_vars['bag']):
+                if 0 <= choice_2 < len(game_vars['bag']):
                     pass
                 else: 
                     print('Invalid Input!')
@@ -455,8 +455,8 @@ Your choice? ''').lower()
                 game_vars['energy'] -= 1
                 
                 # prevent players from planting on occupied places
-            elif farm[pos_y][pos_x].lower == 'house': 
-                print('You can\' plant here!')
+            elif farm[pos_y][pos_x] == 'House': 
+                print('You can\'t plant here!')
             else: 
                 print('This spot has been taken')
 
@@ -489,17 +489,17 @@ def show_stats(game_vars):
     print('+' + '-' * 50 + '+')
     
     # print days
-    print(f'|{' Day ' + str(game_vars['day']):<15}{'Energy: ' + str(game_vars['energy']):<18}{'Money: $' + str(game_vars['money']):<17}|')
+    print(f"|{' Day ' + str(game_vars['day']):<15}{'Energy: ' + str(game_vars['energy']):<18}{'Money: $' + str(game_vars['money']):<17}|")
     
     # check if bag contains seeds then print them
     if len(game_vars['bag']) == 0:
-        print(f'| {'You have no seeds.'}{' ':>30} |')
+        print(f"| {'You have no seeds.'}{' ':>30} |")
 
     else: 
         
         print(f"|{' Your seeds:':<20}{' ':>30}|")
         for a, b in game_vars['bag'].items():
-            print(f'| \t{seeds[a].get('name') + ': ' + str(b):<20}{' ':>22} |')
+            print(f"| \t{seeds[a].get('name') + ': ' + str(b):<20}{' ':>22} |")
     
     print('+' + '-' * 50 + '+')
 
@@ -622,11 +622,8 @@ How successful will you be?
             in_town(game_vars,farm)
 
         elif choice == '2':
-            game_vars, farm, check = load_game(game_vars,farm)
+            print('Load game is not implemented yet.')
 
-            if check:
-                in_town(game_vars,farm)
-            
         elif choice == '3':
             leader_board()
 
