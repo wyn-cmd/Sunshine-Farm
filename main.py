@@ -528,17 +528,6 @@ def end_day(game_vars, farm):
     return game_vars, farm 
 
 
-# in_shop(game_vars) function
-# goals:
-# Show the menu of the seed shop, and allow players to buy seeds
-# Seeds can be bought if player has enough money
-# Ends when player selects to leave the shop
-#
-# def in_shop(game_vars):
-
-
-
-
 def bubble_sort(lista):
 
     n = len(lista)
@@ -634,7 +623,5 @@ How successful will you be?
         
         else:
             print('Invalid Input.')
-
-# Write your main game loop here
 
 main(game_vars,seeds,seed_list,farm)
